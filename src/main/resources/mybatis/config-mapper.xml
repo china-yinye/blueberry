@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mop.dao.ConfigDao">
+
+    <select id="getConfig" resultType="com.mop.entity.Config" parameterType="String">
+        SELECT *
+        FROM log_fields_config
+        WHERE config_name = #{configName}
+    </select>
+
+    <select id="getIsNullConfig" resultType="hashmap" parameterType="String">
+        SELECT *
+        FROM log_isnull_config
+        WHERE tablename = #{tableName}
+    </select>
+
+    <select id="getEmailByOwner" resultType="String" parameterType="String">
+        SELECT email
+        FROM log_mail_config
+        WHERE owner = #{owner}
+    </select>
+
+    <!-- step.1：通过正式表拿到测试表 -->
+    <select id="isNeedAppTypeId" resultType="Integer" parameterType="String">
+        SELECT MAX(is_need_apptypeid)
+        FROM table_info_config WHERE log_table_pro = #{tableName}
+    </select>
+
+    <!-- step.2：再来看看是否需要传递appTypeId -->
+    <select id="getTestTableName" resultType="String" parameterType="hashmap">
+        SELECT log_table
+        FROM table_info_config
+        WHERE log_table_pro = #{tableName}
+        <if test="appTypeId!=null">
+            AND apptypeid_mark = #{appTypeId}
+        </if>
+    </select>
+
+</mapper>

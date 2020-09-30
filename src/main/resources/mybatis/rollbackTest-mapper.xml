@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mop.dao.RollbackTaskDao">
+
+    <select id="getIsAppTypeId" resultType="Integer" parameterType="String">
+        SELECT MAX(is_need_apptypeid)
+        FROM table_info_config
+        WHERE log_table = #{tableName}
+    </select>
+
+    <select id="getTableName" resultType="String" parameterType="hashmap">
+        SELECT log_table_pro
+        FROM table_info_config
+        WHERE log_table = #{tableName}
+        <if test="appTypeId!=null">
+            AND apptypeid_mark = #{appTypeId}
+        </if>
+    </select>
+
+    <select id="getOnlineTableName" parameterType="hashmap" resultType="String">
+        SELECT log_table_pro
+        FROM table_info_config
+        WHERE log_table = #{log_table}
+        AND apptypeid_mark = #{appTypeId}
+        AND is_need_apptypeid = #{isNeedAppTypeID}
+    </select>
+
+    <select id="checkTaskIsExists" parameterType="com.mop.entity.RollbackTask" resultType="com.mop.entity.RollbackTask">
+        SELECT *
+        FROM log_rollback_task
+        WHERE tablename = #{tableName}
+        AND apptypeid = #{appTypeId}
+        AND os = #{os}
+        AND appversion = #{appVersion}
+        AND isrun = 0
+    </select>
+
+    <select id="getNotRunTask" resultType="com.mop.entity.RollbackTask">
+        SELECT *
+        FROM log_rollback_task
+        WHERE isrun = 0
+    </select>
+
+    <insert id="addRollbackTask" parameterType="com.mop.entity.RollbackTask" useGeneratedKeys="false" keyProperty="id">
+        INSERT INTO log_rollback_task(apptypeid,tablename,os,appversion,testnum,createtime,isrun)
+        VALUES(#{appTypeId},#{tableName},#{os},#{appVersion},#{testNum},#{createTime},#{isRun})
+    </insert>
+
+    <select id="getTaskRollbackDay" parameterType="com.mop.entity.RollbackTask" resultType="Integer">
+        SELECT rollbackday
+        FROM log_rollback_task
+        WHERE tablename = #{tableName}
+        AND apptypeid = #{appTypeId}
+        AND os = #{os}
+        AND appversion = #{appVersion}
+        AND isrun = 0
+    </select>
+
+    <update id="updateTaskToIsRun" parameterType="com.mop.entity.RollbackTask">
+        UPDATE log_rollback_task
+        SET updatetime = #{updateTime},rollbackday = rollbackday + 1
+        <if test="isRun!=null">,isrun = 1</if>
+        WHERE tablename = #{tableName}
+        AND apptypeid = #{appTypeId}
+        AND os = #{os}
+        AND appversion = #{appVersion}
+        AND isrun = 0
+    </update>
+
+    <update id="updateTask" parameterType="com.mop.entity.RollbackTask">
+        UPDATE log_rollback_task
+        SET rollbackday = 0,updatetime = #{updateTime}
+        WHERE tablename = #{tableName}
+        AND apptypeid = #{appTypeId}
+        AND os = #{os}
+        AND appversion = #{appVersion}
+        AND isrun = 0
+    </update>
+
+</mapper>

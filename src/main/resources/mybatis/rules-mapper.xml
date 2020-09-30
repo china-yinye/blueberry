@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mop.dao.RulesDao">
+
+    <select id="getRule" resultType="com.mop.entity.Rule" parameterType="String">
+        select * from log_rule where tablename = #{tableName}
+    </select>
+
+    <insert id="addRule" parameterType="com.mop.entity.Rule" useGeneratedKeys="false" keyProperty="rid">
+        insert into log_rule(tablename,rulejson,createtime) values(#{tableName},#{ruleJson},#{createTime})
+    </insert>
+
+    <update id="updateRule" parameterType="com.mop.entity.Rule">
+        update log_rule
+        <trim prefix="set" suffixOverrides=",">
+            <if test="rid!=null">rid = #{rid},</if>
+            <if test="tableName!=null">tablename = #{tableName},</if>
+            <if test="ruleJson!=null">rulejson = #{ruleJson},</if>
+            <if test="createTime!=null">createtime = #{createTime},</if>
+            <if test="updateTime!=null">updatetime = #{updateTime},</if>
+        </trim>
+        where tablename = #{tableName}
+    </update>
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mop.dao.MonitorDao">
+
+    <select id="getTask" resultType="com.mop.entity.MonitorTask">
+        SELECT *
+        FROM log_daily_task
+        WHERE status = 1;
+    </select>
+
+    <insert id="addResult" parameterType="com.mop.entity.MonitorResult" useGeneratedKeys="false" keyProperty="tid">
+        INSERT INTO log_center_test_daily_testresult
+        (logname,apptypeid,testcount,passcount,passpercent,failedcount,failedpercent,ispasspercent,iserror,testresult_detail,failedcase_path,testdata_time,createtime)
+        VALUES(#{logName},#{appTypeId},#{testCount},#{passCount},#{passPercent},#{failedCount},#{failedPercent},#{isPassPercent},#{isError},#{testResult_detail},#{failedCase_path},#{testData_time},#{createTime})
+    </insert>
+
+</mapper>

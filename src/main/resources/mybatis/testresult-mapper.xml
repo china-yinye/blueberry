@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mop.dao.TestresultDao">
+    <select id="getTestresults" resultType="com.mop.entity.Testresult">
+        select * from log_center_test_testresult
+    </select>
+
+    <select id="getTestresult" resultType="com.mop.entity.Testresult" parameterType="Integer">
+        select * from log_center_test_testresult where tid = #{tid}
+    </select>
+
+    <insert id="addTestresult" parameterType="com.mop.entity.Testresult" useGeneratedKeys="false" keyProperty="tid">
+        insert into log_center_test_testresult(owner,logname,appname,os,appversion,testnum,dateline,passpercent,ispass,testdetail,filepath,isdelete,createtime)
+        values(#{owner},#{logname},#{appname},#{os},#{appversion},#{testnum},#{dateline},#{passpercent},#{ispass},#{testdetail},#{filepath},#{isdelete},#{createtime})
+    </insert>
+
+    <insert id="addRollBackTestResult" parameterType="com.mop.entity.Testresult" useGeneratedKeys="false" keyProperty="id">
+        insert into log_rollback_result(apptypeid,tablename,os,appversion,testnum,testdatatime,passpercent,ispass,testdetail,filepath,rollbackday,createtime)
+        values(#{appname},#{logname},#{os},#{appversion},#{testnum},#{dateline},#{passpercent},#{ispass},#{testdetail},#{filepath},#{rollbackDay},#{createtime})
+    </insert>
+
+    <select id="getPassPercent" parameterType="String" resultType="String">
+        select pass_threshold from data_checkout_log_config where log_table = #{db_tb} and is_del = 0
+    </select>
+</mapper>
